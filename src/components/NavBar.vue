@@ -99,7 +99,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 16px;
 }
 .nav-logo {
   font-size: 1.1rem;
@@ -107,6 +107,10 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   text-decoration: none;
   color: var(--text-primary);
   white-space: nowrap;
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .logo-bracket { color: var(--accent-1); }
 .logo-name { margin: 0 4px; }
@@ -133,7 +137,8 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  flex-shrink: 0;
 }
 .lang-toggle {
   display: flex;
@@ -219,13 +224,24 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   .hamburger { display: flex; }
   .navbar { padding: 14px 0; }
   .navbar.scrolled { padding: 10px 0; }
-  .nav-inner { padding: 0 16px; gap: 10px; }
+  .nav-inner { padding: 0 16px; gap: 8px; }
+  /* Logo: show only brackets + initials on narrow screens */
+  .logo-name {
+    display: inline-block;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+  }
 }
 
 @media (max-width: 480px) {
-  .nav-logo { font-size: 0.95rem; }
+  .nav-inner { padding: 0 12px; }
+  .logo-name { max-width: 90px; font-size: 0.9rem; }
+  .logo-bracket { font-size: 0.9rem; }
   .lang-toggle span:last-child { display: none; }
-  .lang-toggle { padding: 7px 10px; }
+  .lang-toggle { padding: 7px 10px; gap: 0; }
   .theme-toggle { width: 34px; height: 34px; }
+  .nav-actions { gap: 6px; }
 }
 </style>

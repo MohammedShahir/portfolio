@@ -8,13 +8,13 @@
         <p class="section-sub">{{ isRtl ? 'رحلتي المهنية في عالم التقنية والتدريب' : 'My professional journey across tech and training' }}</p>
       </div>
 
-      <div class="timeline">
+      <div class="timeline" ref="timelineRef">
         <div
           v-for="(exp, i) in d.experience"
           :key="i"
           class="timeline-item"
           :class="{ 'item-visible': visibleItems[i], 'is-active': active === i }"
-          :style="{ animationDelay: `${i * 0.12}s` }"
+          :data-index="i"
           @mouseenter="active = i"
           @mouseleave="active = null"
         >
@@ -46,28 +46,47 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
+
 const props = defineProps({ d: Object, isRtl: Boolean })
 const active = ref(null)
-
-// Per-item visibility — independent IntersectionObserver per item
+const timelineRef = ref(null)
 const visibleItems = ref({})
-let observers = []
+let observer = null
 
-onMounted(() => {
-  document.querySelectorAll('.timeline-item').forEach((el, i) => {
-    const obs = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        visibleItems.value[i] = true
-        obs.unobserve(el)
-      }
-    }, { threshold: 0.15 })
-    obs.observe(el)
-    observers.push(obs)
+function setupObserver() {
+  // Disconnect previous observer if exists
+  if (observer) { observer.disconnect(); observer = null }
+  visibleItems.value = {}
+
+  nextTick(() => {
+    if (!timelineRef.value) return
+    const items = timelineRef.value.querySelectorAll('.timeline-item')
+
+    observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const idx = parseInt(entry.target.dataset.index)
+          // Stagger the visibility with a small delay per item
+          setTimeout(() => {
+            visibleItems.value = { ...visibleItems.value, [idx]: true }
+          }, idx * 100)
+          observer.unobserve(entry.target)
+        }
+      })
+    }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' })
+
+    items.forEach(el => observer.observe(el))
   })
-})
+}
 
-onUnmounted(() => { observers.forEach(o => o.disconnect()) })
+// Re-setup when language/data changes
+watch(() => props.d, () => {
+  setupObserver()
+}, { immediate: false })
+
+onMounted(() => setupObserver())
+onUnmounted(() => { if (observer) observer.disconnect() })
 </script>
 
 <style scoped>
@@ -75,7 +94,7 @@ onUnmounted(() => { observers.forEach(o => o.disconnect()) })
 
 .timeline { position: relative; display: flex; flex-direction: column; gap: 0; }
 
-/* ─── Timeline item: starts hidden, animates in when visible ─── */
+/* ─── Timeline item animation ─── */
 .timeline-item {
   display: grid;
   grid-template-columns: 40px 1fr;
@@ -83,8 +102,9 @@ onUnmounted(() => { observers.forEach(o => o.disconnect()) })
   position: relative;
   padding-bottom: 8px;
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transform: translateY(28px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+  will-change: opacity, transform;
 }
 .timeline-item.item-visible {
   opacity: 1;
@@ -124,7 +144,7 @@ onUnmounted(() => { observers.forEach(o => o.disconnect()) })
 }
 .timeline-item:last-child .tl-line { display: none; }
 
-/* ─── Card: NO transform on hover, only border/bg change ─── */
+/* ─── Card: NO transform, only visual changes on hover ─── */
 .tl-card {
   margin-bottom: 24px;
   transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
