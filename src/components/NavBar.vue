@@ -25,11 +25,7 @@
             <span v-else key="moon" class="theme-icon">🌙</span>
           </transition>
         </button>
-        <!-- Language Toggle -->
-        <button class="lang-toggle" @click="$emit('toggleLang')" :title="lang === 'en' ? 'العربية' : 'English'">
-          <span class="lang-icon">🌐</span>
-          <span>{{ lang === 'en' ? 'العربية' : 'English' }}</span>
-        </button>
+        <!-- Language Toggle hidden for now -->
         <button class="hamburger" @click="menuOpen = !menuOpen" :class="{ open: menuOpen }">
           <span></span><span></span><span></span>
         </button>
@@ -81,6 +77,9 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 .navbar {
   position: fixed;
   top: 0; left: 0; right: 0;
+  width: 100%; /* إجبار الناف بار على أخذ عرض الشاشة بالكامل */
+  max-width: 100vw; /* منعه من التمدد خارج حدود الشاشة المرئية */
+  box-sizing: border-box;
   z-index: 999;
   padding: 20px 0;
   transition: all 0.4s ease;
@@ -93,31 +92,33 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   padding: 12px 0;
 }
 .nav-inner {
+  width: 100%;
   max-width: 1100px;
+  box-sizing: border-box;
   margin: 0 auto;
   padding: 0 24px;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  grid-template-areas: 'logo links actions';
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 16px;
 }
 .nav-logo {
-  grid-area: logo;
   font-size: 1.1rem;
   font-weight: 700;
   text-decoration: none;
   color: var(--text-primary);
   white-space: nowrap;
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .logo-bracket { color: var(--accent-1); }
 .logo-name { margin: 0 4px; }
 
 .nav-links {
-  grid-area: links;
   display: flex;
   gap: 4px;
-  justify-content: center;
 }
 .nav-link {
   text-decoration: none;
@@ -135,7 +136,6 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 .nav-link.active { color: var(--accent-1); }
 
 .nav-actions {
-  grid-area: actions;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -226,12 +226,14 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   .hamburger { display: flex; }
   .navbar { padding: 14px 0; }
   .navbar.scrolled { padding: 10px 0; }
-  .nav-inner {
-    padding: 0 16px;
-    gap: 8px;
-    /* Collapse to 2 columns: logo | actions */
-    grid-template-columns: auto auto;
-    grid-template-areas: 'logo actions';
+  .nav-inner { padding: 0 16px; gap: 8px; }
+  /* Logo: show only brackets + initials on narrow screens */
+  .logo-name {
+    display: inline-block;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
   }
 }
 
@@ -239,9 +241,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   .nav-inner { padding: 0 12px; }
   .nav-logo { font-size: 0.92rem; }
   .logo-name { font-size: 0.88rem; }
-  .lang-toggle span:last-child { display: none; }
-  .lang-toggle { padding: 7px 10px; gap: 0; }
-  .theme-toggle { width: 32px; height: 32px; }
+  .theme-toggle { width: 34px; height: 34px; }
   .nav-actions { gap: 6px; }
 }
 </style>
