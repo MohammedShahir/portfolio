@@ -77,7 +77,7 @@ const active = ref(null)
   border-radius: 50%;
   background: var(--bg-secondary);
   border: 2px solid var(--accent-1);
-  transition: all 0.35s;
+  transition: all 0.35s !important;
   position: relative;
 }
 .timeline-item.is-active .tl-dot-inner {
@@ -96,7 +96,15 @@ const active = ref(null)
 }
 .timeline-item:last-child .tl-line { display: none; }
 
-.tl-card { margin-bottom: 24px; }
+.tl-card {
+  margin-bottom: 24px;
+  /* Override global .card:hover transform to prevent disappearing on hover */
+  transform: none !important;
+}
+.tl-card:hover {
+  transform: none !important;
+  border-color: rgba(108,99,255,0.25);
+}
 .timeline-item.is-active .tl-card {
   border-color: rgba(108,99,255,0.35);
   background: rgba(108,99,255,0.04);
@@ -125,5 +133,13 @@ const active = ref(null)
 @media (max-width: 640px) {
   .tl-header { flex-direction: column; }
   .tl-meta { align-items: flex-start; }
+  .timeline-item {
+    grid-template-columns: 28px 1fr;
+    gap: 12px;
+  }
+  .tl-dot { padding-top: 20px; }
+  .tl-line { left: 13px; }
+  .tl-card { padding: 16px; }
+  .tl-role { font-size: 0.95rem; }
 }
 </style>

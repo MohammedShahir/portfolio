@@ -337,11 +337,33 @@ onUnmounted(() => clearTimeout(timer))
 }
 
 @media (max-width: 900px) {
-  .hero-inner { grid-template-columns: 1fr; text-align: center; }
+  .hero-inner { grid-template-columns: 1fr; text-align: center; gap: 32px; padding-top: 20px; padding-bottom: 60px; }
   .hero-visual { order: -1; }
   .hero-actions { justify-content: center; }
   .hero-stats { justify-content: center; }
   .hero-tagline { margin: 0 auto 36px; }
   .hero-badge { margin: 0 auto 24px; }
+  .avatar-wrapper { width: 220px; height: 220px; }
+  .ring-1 { width: 190px; height: 190px; }
+  .ring-2 { width: 220px; height: 220px; }
+  .ring-3 { width: 250px; height: 250px; }
+  .avatar-initials { font-size: 3rem; }
+}
+
+@media (max-width: 600px) {
+  .hero-inner { padding: 20px 0 40px; gap: 24px; }
+  .hero-title { font-size: clamp(2rem, 10vw, 3rem); }
+  .hero-tagline { font-size: 0.95rem; }
+  .hero-actions { flex-direction: column; align-items: center; }
+  .hero-actions .btn { width: 100%; max-width: 280px; justify-content: center; }
+  .hero-stats { gap: 12px; }
+  .stat-num { font-size: 1.4rem; }
+  .avatar-wrapper { width: 180px; height: 180px; }
+  .ring-1 { width: 155px; height: 155px; }
+  .ring-2 { width: 180px; height: 180px; }
+  .ring-3 { width: 210px; height: 210px; }
+  .avatar-initials { font-size: 2.5rem; }
+  .float-badge { display: none; }
+  .scroll-indicator { display: none; }
 }
 </style>
