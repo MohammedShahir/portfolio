@@ -12,11 +12,11 @@
         <div
           v-for="(exp, i) in d.experience"
           :key="i"
-          class="timeline-item reveal"
-          :style="{ transitionDelay: `${i * 0.1}s` }"
+          class="timeline-item"
+          :class="{ 'item-visible': visibleItems[i], 'is-active': active === i }"
+          :style="{ animationDelay: `${i * 0.12}s` }"
           @mouseenter="active = i"
           @mouseleave="active = null"
-          :class="{ 'is-active': active === i }"
         >
           <div class="tl-dot">
             <div class="tl-dot-inner"></div>
@@ -46,9 +46,28 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-defineProps({ d: Object, isRtl: Boolean })
+import { ref, onMounted, onUnmounted } from 'vue'
+const props = defineProps({ d: Object, isRtl: Boolean })
 const active = ref(null)
+
+// Per-item visibility — independent IntersectionObserver per item
+const visibleItems = ref({})
+let observers = []
+
+onMounted(() => {
+  document.querySelectorAll('.timeline-item').forEach((el, i) => {
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        visibleItems.value[i] = true
+        obs.unobserve(el)
+      }
+    }, { threshold: 0.15 })
+    obs.observe(el)
+    observers.push(obs)
+  })
+})
+
+onUnmounted(() => { observers.forEach(o => o.disconnect()) })
 </script>
 
 <style scoped>
@@ -56,14 +75,23 @@ const active = ref(null)
 
 .timeline { position: relative; display: flex; flex-direction: column; gap: 0; }
 
+/* ─── Timeline item: starts hidden, animates in when visible ─── */
 .timeline-item {
   display: grid;
   grid-template-columns: 40px 1fr;
   gap: 20px;
   position: relative;
   padding-bottom: 8px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.timeline-item.item-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
+/* ─── Dot ─── */
 .tl-dot {
   display: flex;
   justify-content: center;
@@ -77,8 +105,7 @@ const active = ref(null)
   border-radius: 50%;
   background: var(--bg-secondary);
   border: 2px solid var(--accent-1);
-  transition: all 0.35s !important;
-  position: relative;
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 .timeline-item.is-active .tl-dot-inner {
   background: var(--accent-1);
@@ -86,6 +113,7 @@ const active = ref(null)
   transform: scale(1.3);
 }
 
+/* ─── Line ─── */
 .tl-line {
   position: absolute;
   left: 19px;
@@ -96,18 +124,15 @@ const active = ref(null)
 }
 .timeline-item:last-child .tl-line { display: none; }
 
+/* ─── Card: NO transform on hover, only border/bg change ─── */
 .tl-card {
   margin-bottom: 24px;
-  /* Override global .card:hover transform to prevent disappearing on hover */
-  transform: none !important;
-}
-.tl-card:hover {
-  transform: none !important;
-  border-color: rgba(108,99,255,0.25);
+  transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
 }
 .timeline-item.is-active .tl-card {
-  border-color: rgba(108,99,255,0.35);
-  background: rgba(108,99,255,0.04);
+  border-color: rgba(108,99,255,0.4);
+  background: rgba(108,99,255,0.05);
+  box-shadow: 0 8px 32px rgba(108,99,255,0.1);
 }
 
 .tl-header {
@@ -127,19 +152,20 @@ const active = ref(null)
 .tl-date { font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; }
 .tl-desc { font-size: 0.93rem; color: var(--text-secondary); line-height: 1.75; }
 
+/* ─── RTL ─── */
 .rtl .tl-line { left: auto; right: 19px; }
 .rtl .tl-meta { align-items: flex-start; }
 
+/* ─── Mobile ─── */
 @media (max-width: 640px) {
   .tl-header { flex-direction: column; }
-  .tl-meta { align-items: flex-start; }
-  .timeline-item {
-    grid-template-columns: 28px 1fr;
-    gap: 12px;
-  }
+  .tl-meta { align-items: flex-start; flex-direction: row; flex-wrap: wrap; }
+  .timeline-item { grid-template-columns: 28px 1fr; gap: 12px; }
   .tl-dot { padding-top: 20px; }
-  .tl-line { left: 13px; }
-  .tl-card { padding: 16px; }
+  .tl-line { left: 13px; top: 34px; }
+  .tl-card { margin-bottom: 16px; padding: 16px; }
   .tl-role { font-size: 0.95rem; }
+  .tl-desc { font-size: 0.88rem; }
+  .section-header { margin-bottom: 40px; }
 }
 </style>

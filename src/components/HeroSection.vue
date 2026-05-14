@@ -72,9 +72,9 @@
           <div class="float-badge badge-flutter" style="bottom:10px;left:-30px;">
             <span>📱 Flutter</span>
           </div>
-          <div class="float-badge badge-vue" style="top:60%;right:-40px;">
+          <!-- <div class="float-badge badge-vue" style="top:60%;right:-40px;">
             <span>⚡ Vue.js</span>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>

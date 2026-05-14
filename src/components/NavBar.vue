@@ -217,5 +217,15 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 @media (max-width: 768px) {
   .nav-links { display: none; }
   .hamburger { display: flex; }
+  .navbar { padding: 14px 0; }
+  .navbar.scrolled { padding: 10px 0; }
+  .nav-inner { padding: 0 16px; gap: 10px; }
+}
+
+@media (max-width: 480px) {
+  .nav-logo { font-size: 0.95rem; }
+  .lang-toggle span:last-child { display: none; }
+  .lang-toggle { padding: 7px 10px; }
+  .theme-toggle { width: 34px; height: 34px; }
 }
 </style>
