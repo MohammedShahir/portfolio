@@ -241,7 +241,7 @@ onUnmounted(() => clearTimeout(timer))
   position: absolute;
   inset: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #1a1a3a, #0d0d22);
+  background: linear-gradient(135deg, var(--bg-card), var(--bg-secondary));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -282,8 +282,8 @@ onUnmounted(() => clearTimeout(timer))
 
 .float-badge {
   position: absolute;
-  background: rgba(10,10,31,0.9);
-  border: 1px solid rgba(108,99,255,0.3);
+  background: var(--bg-card);
+  border: 1px solid var(--border-hover);
   border-radius: 100px;
   padding: 6px 14px;
   font-size: 0.78rem;
