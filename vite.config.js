@@ -5,7 +5,7 @@ import vue from '@vitejs/plugin-vue'
 // https://vite.dev/config/
 export default defineConfig({
   // Base path for GitHub Pages: https://mohammedshahir.github.io/portfolio/
-  base: '/portfolio/',
+  base: '/',
   plugins: [
     vue(),
   ],
